@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using InControl;
 
 public class InputHandler : MonoBehaviour {
@@ -31,6 +28,9 @@ public class InputHandler : MonoBehaviour {
 			pos = new Vector2(leftX, leftY);
 		}
 		
+		//Rel position from parent set to stick position from center
 		transform.localPosition = pos;
+		//Rotation just looks at parent lol
+		transform.LookAt(gameObject.transform.parent);
 	}
 }
