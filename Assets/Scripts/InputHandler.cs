@@ -4,34 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using InControl;
 
-public class InputTester : MonoBehaviour {
+public class InputHandler : MonoBehaviour {
 
 	public bool rightStick = false;
+	public float distanceMultiplier = 1;
 	private float leftX;
 	private float leftY;
 	private float rightX;
 	private float rightY;
     
-	void Update () {
+	void Update ()
+	{
 		var inputDevice = InputManager.ActiveDevice;
 		
 		Vector2 pos;
 		if(rightStick)
 		{
-			rightX = inputDevice.LeftStickY.Value;
-			rightY = inputDevice.RightStickY.Value * -1;
+			rightX = inputDevice.RightStickX.Value * distanceMultiplier;
+			rightY = inputDevice.RightStickY.Value * distanceMultiplier;
 			pos = new Vector2(rightX, rightY);
 		}
 		else
 		{
-			leftX = inputDevice.LeftStickX.Value;
-			leftY = inputDevice.RightStickX.Value * -1;
+			leftX = inputDevice.LeftStickX.Value * distanceMultiplier;
+			leftY = inputDevice.LeftStickY.Value * distanceMultiplier;
 			pos = new Vector2(leftX, leftY);
 		}
 		
-		if(rightStick){
-			Debug.Log(pos);
-		}
-		transform.position = pos;
+		transform.localPosition = pos;
 	}
 }
