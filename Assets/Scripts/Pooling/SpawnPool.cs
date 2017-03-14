@@ -5,15 +5,18 @@ public class SpawnPool : MonoBehaviour
 {
 	public float force = 1;
 	public int framesPerShot = 10;
+	public int maxShots = 0;
 
 	private ObjectPooling pool;
 	private GameObject go;
 	private int frameCounter = 0;
 	private bool shootOK = true;
+	private int currentShots = 0;
 
 	void Start ()
 	{
 		pool = GameObject.FindGameObjectWithTag("ObjectPooler").GetComponent<ObjectPooling> ();
+		currentShots = maxShots;
 	}
 
 	void Update ()
@@ -28,6 +31,9 @@ public class SpawnPool : MonoBehaviour
 	public Vector3 Fire()
 	{
 		Vector3 velocity = Vector3.zero;
+		if(currentShots <= 0){
+			shootOK = false;
+		}
 		if(shootOK){
 			shootOK = false;
 
@@ -41,9 +47,16 @@ public class SpawnPool : MonoBehaviour
                 //Probably doesn't accurately represent velocity of obj, but getting .velocity doesn't work (prob bc it's on same frame as AddForce)
 				//Follow up: make size of proejctile matter
 				velocity = go.transform.forward;
-				//Debug.Log(velocity);
+
+				//Reduce shots by 1
+				--currentShots;
 			}
 		}
 		return velocity;
+	}
+
+	public void Reload()
+	{
+		currentShots = maxShots;
 	}
 }

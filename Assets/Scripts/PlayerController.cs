@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour
 
 	private SpawnPool rightPool;
 	private SpawnPool leftPool;
+	private bool leftFireOK = true;
+	private bool rightFireOK = true;
 
 	PlayerActions playerInput;
 
@@ -89,12 +91,26 @@ public class PlayerController : MonoBehaviour
 		//if(leftArm.transform.position != Vector3.zero){
 		leftArm.transform.rotation = Quaternion.LookRotation(leftArm.transform.position - transform.position);
 
+		//Check L/R position for reload
+		if(rightArm.transform.localPosition == Vector3.zero){
+			rightPool.Reload();
+			rightFireOK = false;
+		}
+		else
+			rightFireOK = true;
+		if(leftArm.transform.localPosition == Vector3.zero){
+			leftPool.Reload();
+			leftFireOK = false;
+		}
+		else
+			leftFireOK = true;
+
 		//Check L/R Fire, recoil
-		if(playerInput.RFire){
+		if(playerInput.RFire && rightFireOK){
             Vector3 force = rightPool.Fire();
 			GetComponent<Rigidbody>().AddForce(-force, ForceMode.Impulse);
 		}
-		if(playerInput.LFire){
+		if(playerInput.LFire && leftFireOK){
             Vector3 force = leftPool.Fire();
 			GetComponent<Rigidbody>().AddForce(-force, ForceMode.Impulse);
 		}
