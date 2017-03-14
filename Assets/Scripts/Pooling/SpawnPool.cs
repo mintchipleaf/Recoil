@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-
+/*A lot of this code will either go into a per-item script or be modified by each item
+ */
 public class SpawnPool : MonoBehaviour
 {
 	public float force = 1;
@@ -24,8 +25,9 @@ public class SpawnPool : MonoBehaviour
 		}
 		frameCounter++;
 	}
-	public void Fire()
+	public Vector3 Fire()
 	{
+		Vector3 velocity = Vector3.zero;
 		if(shootOK){
 			shootOK = false;
 
@@ -35,7 +37,13 @@ public class SpawnPool : MonoBehaviour
 				go.transform.rotation = transform.rotation;
 
 				go.GetComponent<Rigidbody>().AddForce(go.transform.forward * force, ForceMode.Impulse);
+				//velocity = go.GetComponent<Rigidbody>().velocity;
+                //Probably doesn't accurately represent velocity of obj, but getting .velocity doesn't work (prob bc it's on same frame as AddForce)
+				//Follow up: make size of proejctile matter
+				velocity = go.transform.forward;
+				//Debug.Log(velocity);
 			}
 		}
+		return velocity;
 	}
 }

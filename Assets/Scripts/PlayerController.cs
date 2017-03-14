@@ -89,12 +89,14 @@ public class PlayerController : MonoBehaviour
 		//if(leftArm.transform.position != Vector3.zero){
 		leftArm.transform.rotation = Quaternion.LookRotation(leftArm.transform.position - transform.position);
 
-		//Check L/R Fire
+		//Check L/R Fire, recoil
 		if(playerInput.RFire){
-			rightPool.Fire();
+            Vector3 force = rightPool.Fire();
+			GetComponent<Rigidbody>().AddForce(-force, ForceMode.Impulse);
 		}
 		if(playerInput.LFire){
-			leftPool.Fire();
+            Vector3 force = leftPool.Fire();
+			GetComponent<Rigidbody>().AddForce(-force, ForceMode.Impulse);
 		}
 	}
 }
