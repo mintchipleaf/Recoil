@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class ObjectPooling : MonoBehaviour
 {
@@ -14,24 +13,23 @@ public class ObjectPooling : MonoBehaviour
 
         for (int i = 0; i < poolSize; i++) {
             pool[i] = (GameObject)Instantiate (prefab, transform.position, Quaternion.identity);
-            pool[i].SetActiveRecursively(false);
+            pool[i].SetActive(false);
         }
     }
 
     public GameObject RetrieveInstance ()
     {
         foreach (GameObject go in pool) {
-            if (!go.active) {
-                go.SetActiveRecursively(true);
+            if (!go.activeSelf) {
+                go.SetActive(true);
                 return go;
             } 
         }
-
         return null;
     }
 
     public void DevolveInstance (GameObject go)
     {
-        go.SetActiveRecursively(false);
+        go.SetActive(false);
     }
 }

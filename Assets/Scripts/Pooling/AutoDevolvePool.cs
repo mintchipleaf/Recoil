@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class AutoDevolvePool : MonoBehaviour
 {
 	public int time = 2;
 
 	private float seconds = 0;
-	private ObjectPooling pooling;
+	private ObjectPooling pooler;
 
 	void Start ()
 	{
-		pooling = GameObject.FindGameObjectWithTag("ObjectPooler").GetComponent<ObjectPooling>();
+		pooler = GameObject.FindGameObjectWithTag("ObjectPooler").GetComponent<ObjectPooling>();
 	}
 
 	void Update ()
@@ -18,8 +17,10 @@ public class AutoDevolvePool : MonoBehaviour
 		seconds += Time.deltaTime;
 
 		if (seconds >= time) {
-			//Debug.Log("devolvido");
-			pooling.DevolveInstance(gameObject);
+			UnityEngine.Rigidbody rb = GetComponent<Rigidbody>();
+			rb.velocity = Vector3.zero;
+			rb.angularVelocity = Vector3.zero;
+			pooler.DevolveInstance(gameObject);
 			seconds = 0;
 		}
 	}
