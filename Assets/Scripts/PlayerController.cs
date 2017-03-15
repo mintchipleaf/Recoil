@@ -41,14 +41,17 @@ public class PlayerActions : PlayerActionSet
 
 public class PlayerController : MonoBehaviour
 {
+	public float defaultDrag = 1;
 	public GameObject rightArm;
 	public GameObject leftArm;
 	public float armDistanceMultiplier = 1;
 
+	private Rigidbody rb;
 	private SpawnPool rightPool;
 	private SpawnPool leftPool;
-	private bool leftFireOK = true;
-	private bool rightFireOK = true;
+	private bool rCentered;
+	private bool lCentered;
+	private bool ceaseFire;
 
 	PlayerActions playerInput;
 
@@ -78,41 +81,75 @@ public class PlayerController : MonoBehaviour
 		//Get spawn pool components
 		rightPool = rightArm.GetComponent<SpawnPool>();
 		leftPool = leftArm.GetComponent<SpawnPool>();
+
+		//TODO: Default drag needs to be tweaked from just 1 or .5
+		//Drag 
+		rb = GetComponent<Rigidbody>();
+		SetDrag(defaultDrag);
 	}
 	
-	// Update is called once per frame
 	void Update () {
-		//Set L/R arm positions (Value.normalized to snap to player i.e. all magnitude 1)
+		//Set L/R arm positions (use Value.normalized to snap to player i.e. all magnitude 1)
 		rightArm.transform.localPosition = playerInput.RMove.Value * armDistanceMultiplier;
 		leftArm.transform.localPosition = playerInput.LMove.Value * armDistanceMultiplier;
-		//Set L/R arm rotations
-		//if(rightArm.transform.position != Vector3.zero){
-		rightArm.transform.rotation = Quaternion.LookRotation(rightArm.transform.position - transform.position);
-		//if(leftArm.transform.position != Vector3.zero){
-		leftArm.transform.rotation = Quaternion.LookRotation(leftArm.transform.position - transform.position);
 
-		//Check L/R position for reload
-		if(rightArm.transform.localPosition == Vector3.zero){
+		/*TODO: Check if positions have changed before advancing further to avoid double-checking
+		/*	check both separately: +more likely to halt advance +pretty easy w/ now-consolidated component assignments
+		/*	MOST OFTEN OCCURS WHILE CENTERED (may not matter)
+		*/
+
+        //Check if local positions are centered
+		rCentered = rightArm.transform.localPosition == Vector3.zero;
+		lCentered = leftArm.transform.localPosition == Vector3.zero;
+
+		//Get global positions for rotation calculations
+		Vector3 pos = transform.position;
+        Vector3 rpos = rightArm.transform.position;
+		Vector3 lpos = leftArm.transform.position;
+
+        //Check center for rotations and reload
+		ceaseFire = true;
+		if(rCentered){
+			rightArm.transform.localRotation = Quaternion.identity;
 			rightPool.Reload();
-			rightFireOK = false;
 		}
-		else
-			rightFireOK = true;
-		if(leftArm.transform.localPosition == Vector3.zero){
+		else{
+			rightArm.transform.rotation = Quaternion.LookRotation(rpos - pos);
+			//Check trigger for firing and recoil
+			if(playerInput.RFire){
+				ceaseFire = false;
+				Vector3 force = rightPool.Fire();
+				Recoil(-force);
+				SetDrag(0);
+			}
+		}
+		if(lCentered){
+			leftArm.transform.localRotation = Quaternion.identity;
 			leftPool.Reload();
-			leftFireOK = false;
 		}
-		else
-			leftFireOK = true;
+		else{
+			leftArm.transform.rotation = Quaternion.LookRotation(lpos - pos);
+			//Check trigger for firing and recoil
+			if(playerInput.LFire){
+				ceaseFire = false;
+				Vector3 force = leftPool.Fire();
+				Recoil(-force);
+				SetDrag(0);
+			}
+		}
 
-		//Check L/R Fire, recoil
-		if(playerInput.RFire && rightFireOK){
-            Vector3 force = rightPool.Fire();
-			GetComponent<Rigidbody>().AddForce(-force, ForceMode.Impulse);
+		//TODO: Have drag reinstate ONLY when no projectiles are firing (currnly only when fire buttons aren't held) (feature?)
+		//Reinstate drag
+		if(ceaseFire)
+			SetDrag(defaultDrag);
 		}
-		if(playerInput.LFire && leftFireOK){
-            Vector3 force = leftPool.Fire();
-			GetComponent<Rigidbody>().AddForce(-force, ForceMode.Impulse);
-		}
+
+	public void SetDrag(float drag){
+		rb.drag = drag;
+	}
+
+    //Hey it's the name of the thing
+	public void Recoil(Vector3 force){
+		rb.AddForce(force, ForceMode.Impulse);
 	}
 }
