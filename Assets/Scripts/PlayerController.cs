@@ -47,8 +47,8 @@ public class PlayerController : MonoBehaviour
 	public float armDistanceMultiplier = 1;
 
 	private Rigidbody rb;
-	private SpawnPool rightPool;
-	private SpawnPool leftPool;
+	private Launcher rightLauncher;
+	private Launcher leftLauncher;
 	private bool rCentered;
 	private bool lCentered;
 	private bool ceaseFire;
@@ -78,9 +78,9 @@ public class PlayerController : MonoBehaviour
 		playerInput.LDown.AddDefaultBinding( InputControlType.LeftStickDown );
 		playerInput.LUp.AddDefaultBinding( InputControlType.LeftStickUp );
 
-		//Get spawn pool components
-		rightPool = rightArm.GetComponent<SpawnPool>();
-		leftPool = leftArm.GetComponent<SpawnPool>();
+		//Get launcher components
+		rightLauncher = rightArm.GetComponent<Launcher>();
+		leftLauncher = leftArm.GetComponent<Launcher>();
 
 		//TODO: Default drag needs to be tweaked from just 1 or .5
 		//Drag 
@@ -111,28 +111,28 @@ public class PlayerController : MonoBehaviour
 		ceaseFire = true;
 		if(rCentered){
 			rightArm.transform.localRotation = Quaternion.identity;
-			rightPool.Reload();
+			rightLauncher.Reload();
 		}
 		else{
 			rightArm.transform.rotation = Quaternion.LookRotation(rpos - pos);
 			//Check trigger for firing and recoil
 			if(playerInput.RFire){
 				ceaseFire = false;
-				Vector3 force = rightPool.Fire();
+				Vector3 force = rightLauncher.Fire();
 				Recoil(-force);
 				SetDrag(0);
 			}
 		}
 		if(lCentered){
 			leftArm.transform.localRotation = Quaternion.identity;
-			leftPool.Reload();
+			leftLauncher.Reload();
 		}
 		else{
 			leftArm.transform.rotation = Quaternion.LookRotation(lpos - pos);
 			//Check trigger for firing and recoil
 			if(playerInput.LFire){
 				ceaseFire = false;
-				Vector3 force = leftPool.Fire();
+				Vector3 force = leftLauncher.Fire();
 				Recoil(-force);
 				SetDrag(0);
 			}
