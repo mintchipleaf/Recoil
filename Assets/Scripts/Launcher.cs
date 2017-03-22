@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Launcher : MonoBehaviour
 {
@@ -11,11 +9,16 @@ public class Launcher : MonoBehaviour
 	private SpawnPool spawner;
 	private int frameCounter = 0;
 	private bool shootOK = true;
+	[SerializeField]
 	private int currentShots = 0;
+	private Renderer renderer;
+	[SerializeField]
+	private float reloadPercentage;
 
 	void Start () {
 		spawner = GameObject.FindGameObjectWithTag("ObjectPooler").GetComponent<SpawnPool> ();
 		currentShots = maxShots;
+		renderer = GetComponent<Renderer>();
 	}
 	
 	void Update () {
@@ -25,6 +28,10 @@ public class Launcher : MonoBehaviour
 			shootOK = true;
 		}
 		frameCounter++;	
+
+		//Set shader reload percentage
+		reloadPercentage = (float)currentShots/(float)maxShots;
+		renderer.material.SetFloat("_ReloadPercentage", reloadPercentage);
 	}
 
 	public Vector3 Fire(){
@@ -37,7 +44,7 @@ public class Launcher : MonoBehaviour
 			/*Todo: Spawn projectile outside launcher model
 			 */
             //Spawn projectile
-			velocity = spawner.Spawn(transform.position, transform.rotation, projectileForceMultiplier);
+			velocity = spawner.Spawn(transform.position, transform.rotation, projectileForceMultiplier, renderer.material.color);
 			//Reduce shots by 1
 			--currentShots;
 		}
