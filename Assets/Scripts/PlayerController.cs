@@ -102,10 +102,9 @@ public class PlayerController : MonoBehaviour
 		rCentered = rightArm.transform.localPosition == Vector3.zero;
 		lCentered = leftArm.transform.localPosition == Vector3.zero;
 
-		//Get global positions for rotation calculations
-		Vector3 pos = transform.position;
-        Vector3 rpos = rightArm.transform.position;
-		Vector3 lpos = leftArm.transform.position;
+		//Get local positions for rotation calculations
+        Vector3 rpos = rightArm.transform.localPosition;
+		Vector3 lpos = leftArm.transform.localPosition;
 
         //Check center for rotations and reload
 		ceaseFire = true;
@@ -114,7 +113,7 @@ public class PlayerController : MonoBehaviour
 			rightLauncher.Reload();
 		}
 		else{
-			rightArm.transform.rotation = Quaternion.LookRotation(rpos - pos);
+			rightArm.transform.rotation = Quaternion.Euler(-Mathf.Atan2(rpos.y,rpos.x) * Mathf.Rad2Deg,90f,0f);
 			//Check trigger for firing and recoil
 			if(playerInput.RFire){
 				ceaseFire = false;
@@ -128,7 +127,7 @@ public class PlayerController : MonoBehaviour
 			leftLauncher.Reload();
 		}
 		else{
-			leftArm.transform.rotation = Quaternion.LookRotation(lpos - pos);
+			leftArm.transform.localRotation = Quaternion.Euler(-Mathf.Atan2(lpos.y,lpos.x) * Mathf.Rad2Deg,90f,0f);
 			//Check trigger for firing and recoil
 			if(playerInput.LFire){
 				ceaseFire = false;

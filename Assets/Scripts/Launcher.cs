@@ -7,16 +7,18 @@ public class Launcher : MonoBehaviour
 	public int maxShots = 0;
 
 	private SpawnPool spawner;
+	private Transform spawnPoint;
 	private int frameCounter = 0;
 	private bool shootOK = true;
 	[SerializeField]
 	private int currentShots = 0;
-	private Renderer renderer;
+	new private Renderer renderer;
 	[SerializeField]
 	private float reloadPercentage;
 
 	void Start () {
 		spawner = GameObject.FindGameObjectWithTag("ObjectPooler").GetComponent<SpawnPool> ();
+		spawnPoint = transform.Find("SpawnPoint");
 		currentShots = maxShots;
 		renderer = GetComponent<Renderer>();
 	}
@@ -29,26 +31,24 @@ public class Launcher : MonoBehaviour
 		}
 		frameCounter++;	
 
-		//Set shader reload percentage
+		//Set shader reload percentage||
 		reloadPercentage = (float)currentShots/(float)maxShots;
 		renderer.material.SetFloat("_ReloadPercentage", reloadPercentage);
 	}
 
 	public Vector3 Fire(){
-		Vector3 velocity = Vector3.zero;
+		Vector3 force = Vector3.zero;
 		if(currentShots <= 0){
 			shootOK = false;
 		}
 		if(shootOK){
 			shootOK = false;
-			/*Todo: Spawn projectile outside launcher model
-			 */
             //Spawn projectile
-			velocity = spawner.Spawn(transform.position, transform.rotation, projectileForceMultiplier, renderer.material.color);
+			force = spawner.Spawn(spawnPoint.position, transform.rotation, projectileForceMultiplier, renderer.material.color);
 			//Reduce shots by 1
 			--currentShots;
 		}
-		return velocity;
+		return force;
 	}
 
 	public void Reload(){
