@@ -42,6 +42,7 @@ public class PlayerActions : PlayerActionSet
 public class PlayerController : MonoBehaviour
 {
 	public float defaultDrag = 1;
+	public float recoilReductionMultiplier = 1;
 	public GameObject rightArm;
 	public GameObject leftArm;
 	public float armDistanceMultiplier = 1;
@@ -149,6 +150,8 @@ public class PlayerController : MonoBehaviour
 
     //Hey it's the name of the thing
 	public void Recoil(Vector3 force){
+		//Dampen recoil force
+		force *= recoilReductionMultiplier;
 		rb.AddForce(force, ForceMode.Impulse);
 	}
 }

@@ -887,7 +887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9fe7f89e82591d40aad8002459684dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileForceMultiplier: 2
+  projectileForceMultiplier: 5
   framesPerShot: 10
   maxShots: 20
   currentShots: 0
@@ -986,7 +986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9fe7f89e82591d40aad8002459684dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileForceMultiplier: 2
+  projectileForceMultiplier: 5
   framesPerShot: 10
   maxShots: 20
   currentShots: 0
@@ -1332,6 +1332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultDrag: 1
+  recoilReductionMultiplier: 0.5
   rightArm: {fileID: 797844184}
   leftArm: {fileID: 650185907}
   armDistanceMultiplier: 1.5
