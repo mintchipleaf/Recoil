@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
 using InControl;
 
+public enum PlayerType 
+{
+	Player1,
+	Player2
+}
+
 public class PlayerActions : PlayerActionSet
 {
 	//Right stick
@@ -41,12 +47,14 @@ public class PlayerActions : PlayerActionSet
 
 public class PlayerController : MonoBehaviour
 {
+	public PlayerType playerType;
 	public float defaultDrag = 1;
 	public float recoilReductionMultiplier = 1;
 	public GameObject rightArm;
 	public GameObject leftArm;
 	public float armDistanceMultiplier = 1;
 
+	private GameManager gm;
 	private Rigidbody rb;
 	private Launcher rightLauncher;
 	private Launcher leftLauncher;
@@ -56,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
 	PlayerActions playerInput;
 
-	void Start () {
+	void Awake () {
 		playerInput = new PlayerActions();
 
 		playerInput.RFire.AddDefaultBinding( InputControlType.RightTrigger);
@@ -88,8 +96,14 @@ public class PlayerController : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 		SetDrag(defaultDrag);
 	}
+
+	void Start(){
+         gm = GameManager.instance;
+	}
 	
 	void Update () {
+		playerInput.Device = gm.GetPlayerController(playerType);
+		
 		//Set L/R arm positions (use Value.normalized to snap to player i.e. all magnitude 1)
 		rightArm.transform.localPosition = playerInput.RMove.Value * armDistanceMultiplier;
 		leftArm.transform.localPosition = playerInput.LMove.Value * armDistanceMultiplier;
